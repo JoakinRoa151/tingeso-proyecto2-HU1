@@ -6,19 +6,27 @@ import org.springframework.stereotype.Service;
 import tingeso.HU1.entities.Ingreso_salidaEntity;
 import tingeso.HU1.repositories.Ingreso_salidaRepository;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 import java.sql.Date;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.StringTokenizer;
+
+
+
+import org.springframework.core.io.Resource;
 @Service
 public class Ingreso_salidaService {
     @Autowired
     Ingreso_salidaRepository ingreso_salidaRepository;
+
+    @Autowired
+    FileUploadService fileUploadService;
+
 
     public Ingreso_salidaEntity guardarIngreso_salida(Ingreso_salidaEntity ingreso_salida){
         return ingreso_salidaRepository.save(ingreso_salida);
@@ -32,33 +40,7 @@ public class Ingreso_salidaService {
         Date nueva_fecha = new Date(new SimpleDateFormat("yyyy/MM/dd").parse(fecha).getTime());
         return nueva_fecha;
     }
-    public void LeerArchivo(){
-        try {
-            File myObj = new File("cargas/DATA.txt");
-            Scanner scanner = new Scanner(myObj);
-
-            while (scanner.hasNextLine()) {
-                String linea = scanner.nextLine();
-                StringTokenizer atributo= new StringTokenizer(linea, ";");
-                Ingreso_salidaEntity ingreso_salida = new Ingreso_salidaEntity();
-                while(atributo.hasMoreElements()){
-                    Date fecha= convertidorDate(atributo.nextElement().toString());
-                    ingreso_salida.setFecha(fecha);
-                    Time hora = convertidorTime(atributo.nextElement().toString());
-                    ingreso_salida.setHora(hora);
-                    ingreso_salida.setRut_ing_sal(atributo.nextElement().toString());
-                }
-                guardarIngreso_salida(ingreso_salida);
-            }
-            scanner.close();
-            return;
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    
     public ArrayList<Ingreso_salidaEntity> horasExtraPorRut(String rutEmpleado){
         return (ingreso_salidaRepository.buscarHorasExtrasPorRut(rutEmpleado));
     }
@@ -78,8 +60,36 @@ public class Ingreso_salidaService {
         return(ingreso_salidaRepository.buscarEmpleadosHorasExtra());
     }
 
-    public void eliminarTodoIngresoSalida(){
+    public void eliminarTodoIngreso_salida(){
         ingreso_salidaRepository.deleteAll();
         return;
+    }
+
+    private Ingreso_salidaEntity lineaAIngreso_salida(String linea) throws ParseException{
+        // Se separa la linea por los ;
+        String[] lineaSeparada =  linea.split(";");
+
+        Date fecha = new Date(new SimpleDateFormat("yyyy/MM/dd").parse(lineaSeparada[0]).getTime());
+        Time hora  = new Time((new SimpleDateFormat("HH:mm").parse(lineaSeparada[1])).getTime());
+        String rut = lineaSeparada[2];
+
+        Ingreso_salidaEntity Ingreso_salidaEntity = new Ingreso_salidaEntity(null, fecha, hora, rut);
+        return Ingreso_salidaEntity;
+    }
+
+
+    public void leerArchivoSubido(String filename){
+        try{
+            Resource data = fileUploadService.load(filename);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(data.getInputStream()));
+            String line = reader.readLine();
+            while(line != null){
+                ingreso_salidaRepository.save(lineaAIngreso_salida(line));
+                line = reader.readLine();
+            }
+            reader.close();
+        }catch(Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }
