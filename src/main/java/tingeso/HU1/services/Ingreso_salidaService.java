@@ -92,4 +92,14 @@ public class Ingreso_salidaService {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+    public int buscarAtrasosPorRutTipo1(String rutEmpleado){
+        return(ingreso_salidaRepository.buscarAtrasosPorRutTipo1(rutEmpleado));
+    }
+    public int buscarAtrasosPorRutTipo2(String rutEmpleado){
+        return(ingreso_salidaRepository.buscarAtrasosPorRutTipo2(rutEmpleado));
+    }
+    public int buscarAtrasosPorRutTipo3(String rutEmpleado){
+        return(ingreso_salidaRepository.buscarAtrasosPorRutTipo3(rutEmpleado));
+    }
 }
