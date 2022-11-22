@@ -3,6 +3,8 @@ package tingeso.HU1.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import tingeso.HU1.entities.Ingreso_salidaEntity;
 import tingeso.HU1.repositories.Ingreso_salidaRepository;
 
@@ -15,8 +17,7 @@ import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
-
+import java.util.List;
 
 import org.springframework.core.io.Resource;
 @Service
@@ -26,8 +27,8 @@ public class Ingreso_salidaService {
 
     @Autowired
     FileUploadService fileUploadService;
-
-
+    @Autowired
+    RestTemplate restTemplate;
     public Ingreso_salidaEntity guardarIngreso_salida(Ingreso_salidaEntity ingreso_salida){
         return ingreso_salidaRepository.save(ingreso_salida);
     }
@@ -53,7 +54,7 @@ public class Ingreso_salidaService {
         }
         return(contadorHoras);
     }
-    public ArrayList<Ingreso_salidaEntity> buscarInasistencias(){
+    public List<Ingreso_salidaEntity> buscarInasistencias(){
         return(ingreso_salidaRepository.buscarInasistencias());
     }
     public ArrayList<String> buscarEmpleadosHorasExtra(){
@@ -87,6 +88,7 @@ public class Ingreso_salidaService {
                 ingreso_salidaRepository.save(lineaAIngreso_salida(line));
                 line = reader.readLine();
             }
+            String respuesta = restTemplate.getForObject("http://localhost:HU2-service/inasistencia/inasistenciasAutomatico", String.class);
             reader.close();
         }catch(Exception e){
             throw new RuntimeException(e.getMessage());

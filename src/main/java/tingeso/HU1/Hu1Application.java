@@ -6,10 +6,12 @@ import org.hibernate.graph.internal.SubGraphImpl;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 import tingeso.HU1.services.FileUploadService;
 
 @SpringBootApplication
+@EnableEurekaClient
 public class Hu1Application implements CommandLineRunner {
 	@Resource
 	FileUploadService fileUploadService;

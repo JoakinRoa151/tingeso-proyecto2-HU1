@@ -21,8 +21,8 @@ public class Ingreso_salidaController {
     Ingreso_salidaService ingreso_salidaService;
 
     @GetMapping("/buscarInasistencias")
-    public ResponseEntity<ArrayList<Ingreso_salidaEntity>> buscarInasistencias(){
-      ArrayList<Ingreso_salidaEntity> inasistencias = ingreso_salidaService.buscarInasistencias();
+    public ResponseEntity<List<Ingreso_salidaEntity>> buscarInasistencias(){
+      List<Ingreso_salidaEntity> inasistencias = ingreso_salidaService.buscarInasistencias();
         return ResponseEntity.ok(inasistencias);
     }
     @GetMapping("/cantidadHorasExtraPorRut/{rutEmpleado}")
@@ -44,5 +44,11 @@ public class Ingreso_salidaController {
     public ResponseEntity<Integer> buscarAtrasosPorRutTipo3(@PathVariable String rutEmpleado){
         int atrasos = ingreso_salidaService.buscarAtrasosPorRutTipo3(rutEmpleado);
         return ResponseEntity.ok(atrasos);
+    }
+
+    @GetMapping("/eliminarIngresoSalida")
+    public ResponseEntity<String> eliminarIngresoSalida(){
+        ingreso_salidaService.eliminarTodoIngreso_salida();
+        return ResponseEntity.ok("eliminado con exito");
     }
 }

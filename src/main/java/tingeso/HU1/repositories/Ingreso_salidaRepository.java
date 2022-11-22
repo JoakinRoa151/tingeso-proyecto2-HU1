@@ -5,9 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+
 import tingeso.HU1.entities.Ingreso_salidaEntity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public interface Ingreso_salidaRepository extends JpaRepository<Ingreso_salidaEntity, Long> {
@@ -25,7 +28,7 @@ public interface Ingreso_salidaRepository extends JpaRepository<Ingreso_salidaEn
 
     @Query(value ="SELECT *  FROM hu1.ingreso_salida as t where hora>\"09:10\" and hora<\"18:00\"" ,
             nativeQuery = true)
-    ArrayList<Ingreso_salidaEntity> buscarInasistencias();
+    List<Ingreso_salidaEntity> buscarInasistencias();
 
     @Query(value= "SELECT * FROM hu1.ingreso_salida as i where i.hora>\"18:00\" and i.rut_ing_sal= :rut_ing_sal",
             nativeQuery = true)
